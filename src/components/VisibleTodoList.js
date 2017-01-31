@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import * as actions from '../actions';
-import { getVisibleTodos, getIsFetching } from '../reducers';
+import { getVisibleTodos, getIsFetching, getErrorMessage } from '../reducers';
 import TodoList from './TodoList';
 import FetchError from './FetchError';
 
@@ -33,7 +33,7 @@ class VisibleTodoList extends Component {
       return (
         <FetchError
           message={errorMessage}
-          onRetry{() => this.fetchData()}
+          onRetry={() => this.fetchData()}
         />
       );
     }
@@ -49,6 +49,8 @@ class VisibleTodoList extends Component {
 
 VisibleTodoList.propTypes = {
   filter: PropTypes.oneOf(['all', 'active', 'completed']).isRequired,
+  todos: PropTypes.array.isRequired,
+  isFetching: PropTypes.bool.isRequired,
   fetchTodos: PropTypes.func.isRequired,
   toggleTodo: PropTypes.func.isRequired,
 };
@@ -56,8 +58,9 @@ VisibleTodoList.propTypes = {
 const mapStateToProps = (state, { params }) => {
   const filter = params.filter || 'all';
   return {
-    todos: getVisibleTodos(state, filter),
     isFetching: getIsFetching(state, filter),
+    errorMessage: getErrorMessage(state, filter),
+    todos: getVisibleTodos(state, filter),
     filter,
   };
 };

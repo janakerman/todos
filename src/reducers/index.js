@@ -2,7 +2,6 @@ import { combineReducers } from 'redux';
 import byId, * as fromById from './byId';
 import createList, * as fromList from './createList';
 
-
 const listByFilter = combineReducers({
   all: createList('all'),
   active: createList('active'),
@@ -22,3 +21,5 @@ export const getVisibleTodos = (state, filter) => {
 };
 
 export const getIsFetching = (state, filter) => fromList.getIsFetching(state.listByFilter[filter]);
+
+export const getErrorMessage = (state, filter) => fromList.getErrorMessage(state.listByFilter[filter]);
