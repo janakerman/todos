@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import todoApp from './reducers';
 
@@ -14,11 +15,6 @@ actions in a different way that default.
 
 We're assuming if we're passed a function, then that wants the dispatch.
 */
-const thunk = (store) => (next) => (action) => {
-  typeof action === 'function' ?
-    action(store.dispatch) : next(action);
-};
-
 const configureStore = () => {
 
   const middlewares = [thunk];
