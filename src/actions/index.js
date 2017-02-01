@@ -11,7 +11,7 @@ import {getIsFetching} from '../reducers';
 
   Such functions returned from other functions are called 'thunks'.
 */
-export const fetchTodos = (filter) => (dispatch, getState) => {
+export const fetchTodos = (filter = 'all') => (dispatch, getState) => {
   if (getIsFetching(getState(), filter)) {
     return Promise.resolve();
   }

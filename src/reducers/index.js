@@ -1,25 +1,65 @@
 import { combineReducers } from 'redux';
-import byId, * as fromById from './byId';
-import createList, * as fromList from './createList';
 
-const listByFilter = combineReducers({
-  all: createList('all'),
-  active: createList('active'),
-  completed: createList('completed'),
-});
+const byId = (state = {}, action) => {
+  if (!action.response) {
+    return state;
+  }
+
+  return {
+    ...state,
+    ...action.response.entities.todos,
+  };
+};
+
+const isFetching = (state = false, action) => {
+  switch (action.type) {
+    case 'FETCH_TODOS_REQUEST':
+      return true;
+    case 'FETCH_TODOS_SUCCESS':
+    case 'FETCH_TODOS_FAILURE':
+      return false;
+    default:
+      return state;
+  }
+};
+
+const errorMessage = (state = null, action) => {
+  switch (action.type) {
+    case 'FETCH_TODOS_FAILURE':
+      return action.message;
+    case 'FETCH_TODOS_SUCCESS':
+    case 'FETCH_TODOS_REQUEST':
+      return null;
+    default:
+      return state;
+  }
+};
 
 const todos = combineReducers({
   byId,
-  listByFilter,
+  isFetching,
+  errorMessage
 });
 
 export default todos;
 
+// Public API
+export const getTodo = (state, id) => state.byId[id];
+export const getIsFetching = (state) => state.isFetching;
+export const getErrorMessage = (state) => state.errorMessage;
 export const getVisibleTodos = (state, filter) => {
-  const ids = fromList.getIds(state.listByFilter[filter]);
-  return ids.map(id => fromById.getTodo(state.byId, id));
+
+  const completed = (todo) => todo.completed;
+  const active = (todo) => !todo.completed;
+  const all = (todo) => todo;
+
+  const filterToFunc = {
+    all,
+    active,
+    completed,
+  };
+
+  return Object.keys(state.byId)
+    .map(id => getTodo(state, id)) // Map to array of todos
+    .filter(filterToFunc[filter]);
 };
-
-export const getIsFetching = (state, filter) => fromList.getIsFetching(state.listByFilter[filter]);
-
-export const getErrorMessage = (state, filter) => fromList.getErrorMessage(state.listByFilter[filter]);
