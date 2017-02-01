@@ -51,9 +51,21 @@ export const addTodo = (text) =>
     return todo;
   });
 
-const toggleTodo = (id) =>
+export const toggleTodo = (id) =>
   delay(500).then(() => {
     const todo = fakeDatabase.todos.find(t => t.id === id);
-    todo.completed = !todo.completed;
-    return todo;
+
+    const newTodo = {
+      ...todo,
+      completed: !todo.completed,
+    };
+
+    const index = fakeDatabase.todos.indexOf(todo);
+
+    if (index === -1) {
+      throw new Error('Toggled todo does not exist');
+    }
+
+    fakeDatabase.todos[index] = newTodo;
+    return newTodo;
   });
