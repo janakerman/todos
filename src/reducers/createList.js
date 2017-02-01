@@ -10,12 +10,12 @@ const createList = (filter) => {
         // If the filter hasn't changed, then don't update the list. Note: Not 100% sure why this is needed - premature optimisation?
         // TODO: Answer the above tomorrow!
         return filter === action.filter ?
-          action.response.map(todo => todo.id) :
+          action.response.result :
           state;
       case 'ADD_TODO_SUCCESS':
         // We only add the ID to active & all lists as no newly added todo is completed.
         return filter !== 'completed' ?
-          [... state, action.response.id] :
+          [...state, action.response.result] :
           state;
       default:
         return state;
